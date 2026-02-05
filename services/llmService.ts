@@ -115,8 +115,8 @@ Remember: Output ONLY the JSON object, nothing else.`;
 
 const getOpenAIClient = () => {
   return new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-    baseURL: process.env.OPENAI_BASE_URL || "https://api.openai.com/v1",
+    apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+    baseURL: import.meta.env.VITE_OPENAI_BASE_URL || "https://api.openai.com/v1",
     dangerouslyAllowBrowser: true
   });
 };
@@ -150,10 +150,10 @@ export const architectResume = async (
   fileData?: { data: string, mimeType: string, fileName?: string }
 ) => {
   const openai = getOpenAIClient();
-  const model = process.env.OPENAI_MODEL || "gpt-4o";
+  const model = import.meta.env.VITE_OPENAI_MODEL || "gpt-4o";
   
   console.log("Using model:", model);
-  console.log("Using base URL:", process.env.OPENAI_BASE_URL);
+  console.log("Using base URL:", import.meta.env.VITE_OPENAI_BASE_URL);
   if (fileData) {
     console.log("File uploaded with mimeType:", fileData.mimeType);
   }
@@ -288,7 +288,7 @@ MANDATORY INSTRUCTIONS FOR THIS REQUEST:
 
 export const enhancePrompt = async (prompt: string) => {
   const openai = getOpenAIClient();
-  const model = process.env.OPENAI_MODEL || "gpt-4o";
+  const model = import.meta.env.VITE_OPENAI_MODEL || "gpt-4o";
   
   try {
     const response = await openai.chat.completions.create({
