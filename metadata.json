@@ -1,0 +1,7 @@
+{
+  "name": "DocArchitect AI",
+  "description": "An AI-powered LaTeX document architect for resumes, invoices, letterheads, and more. Scan documents or use prompts to generate professional files.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
