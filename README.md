@@ -27,10 +27,10 @@ An AI-powered document architect for creating professional resumes, cover letter
 
 2. Configure your API in [.env.local](.env.local):
    ```env
-   # OpenAI-compatible API configuration
-   OPENAI_API_KEY=your-api-key-here
-   OPENAI_BASE_URL=https://api.openai.com/v1
-   OPENAI_MODEL=gpt-4o
+   # OpenAI-compatible API configuration (VITE_ prefix required for Vite)
+   VITE_OPENAI_API_KEY=your-api-key-here
+   VITE_OPENAI_BASE_URL=https://api.openai.com/v1
+   VITE_OPENAI_MODEL=gpt-4o
    ```
 
 3. Run the app:
@@ -42,51 +42,51 @@ An AI-powered document architect for creating professional resumes, cover letter
 
 ### OpenAI (Default)
 ```env
-OPENAI_API_KEY=sk-...
-OPENAI_BASE_URL=https://api.openai.com/v1
-OPENAI_MODEL=gpt-4o
+VITE_OPENAI_API_KEY=sk-...
+VITE_OPENAI_BASE_URL=https://api.openai.com/v1
+VITE_OPENAI_MODEL=gpt-4o
 ```
 
 ### Azure OpenAI
 ```env
-OPENAI_API_KEY=your-azure-key
-OPENAI_BASE_URL=https://your-resource.openai.azure.com/openai/deployments/your-deployment
-OPENAI_MODEL=gpt-4o
+VITE_OPENAI_API_KEY=your-azure-key
+VITE_OPENAI_BASE_URL=https://your-resource.openai.azure.com/openai/deployments/your-deployment
+VITE_OPENAI_MODEL=gpt-4o
 ```
 
 ### Ollama (Local)
 ```env
-OPENAI_API_KEY=ollama
-OPENAI_BASE_URL=http://localhost:11434/v1
-OPENAI_MODEL=llama3.2
+VITE_OPENAI_API_KEY=ollama
+VITE_OPENAI_BASE_URL=http://localhost:11434/v1
+VITE_OPENAI_MODEL=llama3.2
 ```
 
 ### LM Studio (Local)
 ```env
-OPENAI_API_KEY=lm-studio
-OPENAI_BASE_URL=http://localhost:1234/v1
-OPENAI_MODEL=local-model
+VITE_OPENAI_API_KEY=lm-studio
+VITE_OPENAI_BASE_URL=http://localhost:1234/v1
+VITE_OPENAI_MODEL=local-model
 ```
 
 ### OpenRouter
 ```env
-OPENAI_API_KEY=sk-or-...
-OPENAI_BASE_URL=https://openrouter.ai/api/v1
-OPENAI_MODEL=anthropic/claude-3.5-sonnet
+VITE_OPENAI_API_KEY=sk-or-...
+VITE_OPENAI_BASE_URL=https://openrouter.ai/api/v1
+VITE_OPENAI_MODEL=anthropic/claude-3.5-sonnet
 ```
 
 ### Together AI
 ```env
-OPENAI_API_KEY=your-together-key
-OPENAI_BASE_URL=https://api.together.xyz/v1
-OPENAI_MODEL=meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo
+VITE_OPENAI_API_KEY=your-together-key
+VITE_OPENAI_BASE_URL=https://api.together.xyz/v1
+VITE_OPENAI_MODEL=meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo
 ```
 
 ### Groq
 ```env
-OPENAI_API_KEY=gsk_...
-OPENAI_BASE_URL=https://api.groq.com/openai/v1
-OPENAI_MODEL=llama-3.3-70b-versatile
+VITE_OPENAI_API_KEY=gsk_...
+VITE_OPENAI_BASE_URL=https://api.groq.com/openai/v1
+VITE_OPENAI_MODEL=llama-3.3-70b-versatile
 ```
 
 ## Tech Stack
