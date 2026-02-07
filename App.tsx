@@ -364,6 +364,25 @@ const App: React.FC = () => {
       (el as HTMLElement).style.display = 'none';
     });
 
+    // Add a temporary style tag to override min-height and excessive padding
+    // This ensures content flows naturally without large empty spaces between pages
+    const pdfStyleOverride = document.createElement('style');
+    pdfStyleOverride.id = 'pdf-export-override';
+    pdfStyleOverride.textContent = `
+      #resume-content-root, #resume-content-root * {
+        min-height: auto !important;
+      }
+      #resume-content-root .no-print {
+        display: none !important;
+      }
+    `;
+    document.head.appendChild(pdfStyleOverride);
+    
+    // Remove the wrapper's bottom padding that creates empty space
+    const wrapper = element.parentElement;
+    const originalWrapperPb = wrapper?.style.paddingBottom || '';
+    if (wrapper) wrapper.style.paddingBottom = '0';
+
     try {
       const opt = {
         margin: 0,
@@ -376,13 +395,20 @@ const App: React.FC = () => {
           logging: false
         },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'], avoid: ['section', 'li', '.break-inside-avoid'] }
+        pagebreak: { mode: ['css', 'legacy'], avoid: ['.break-inside-avoid'] }
       };
       await html2pdf().set(opt).from(element).save();
     } finally {
       // Restore original styles
       element.style.transform = originalTransform;
       element.style.boxShadow = originalBoxShadow;
+      
+      // Remove the temporary PDF style override
+      const overrideStyle = document.getElementById('pdf-export-override');
+      if (overrideStyle) overrideStyle.remove();
+      
+      // Restore wrapper padding
+      if (wrapper) wrapper.style.paddingBottom = originalWrapperPb;
       
       // Restore visibility of no-print elements
       noPrintElements.forEach((el, i) => {
