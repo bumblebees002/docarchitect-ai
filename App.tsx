@@ -347,74 +347,64 @@ const App: React.FC = () => {
     const html2pdf = (window as any).html2pdf;
     if (!element || !html2pdf || isExportingPdf) return;
     setIsExportingPdf(true);
-    
-    // Store original styles
-    const originalTransform = element.style.transform;
-    const originalBoxShadow = element.style.boxShadow;
-    
-    // Apply PDF-friendly styles
-    element.style.transform = 'none';
-    element.style.boxShadow = 'none';
-
-    // Hide all elements with 'no-print' class
-    const noPrintElements = element.querySelectorAll('.no-print');
-    const originalDisplays: string[] = [];
-    noPrintElements.forEach((el, i) => {
-      originalDisplays[i] = (el as HTMLElement).style.display;
-      (el as HTMLElement).style.display = 'none';
-    });
-
-    // Add a temporary style tag to override min-height and excessive padding
-    // This ensures content flows naturally without large empty spaces between pages
-    const pdfStyleOverride = document.createElement('style');
-    pdfStyleOverride.id = 'pdf-export-override';
-    pdfStyleOverride.textContent = `
-      #resume-content-root, #resume-content-root * {
-        min-height: auto !important;
-      }
-      #resume-content-root .no-print {
-        display: none !important;
-      }
-    `;
-    document.head.appendChild(pdfStyleOverride);
-    
-    // Remove the wrapper's bottom padding that creates empty space
-    const wrapper = element.parentElement;
-    const originalWrapperPb = wrapper?.style.paddingBottom || '';
-    if (wrapper) wrapper.style.paddingBottom = '0';
 
     try {
+      // Clone the element so we don't modify the live DOM
+      const clone = element.cloneNode(true) as HTMLElement;
+      clone.id = 'resume-pdf-clone';
+
+      // Apply PDF-friendly styles to clone
+      clone.style.transform = 'none';
+      clone.style.boxShadow = 'none';
+      clone.style.width = '210mm';
+      clone.style.minHeight = 'auto';
+      clone.style.position = 'absolute';
+      clone.style.left = '-9999px';
+      clone.style.top = '0';
+
+      // Remove no-print elements from clone
+      clone.querySelectorAll('.no-print').forEach(el => el.remove());
+
+      // Override min-height on all children to prevent empty space
+      clone.querySelectorAll('*').forEach(el => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.style.minHeight = 'auto';
+      });
+
+      // Append clone to body for rendering
+      document.body.appendChild(clone);
+
+      // Wait for layout to settle
+      await new Promise(r => setTimeout(r, 150));
+
+      // Small top/bottom margin (in mm) to prevent text trimming at page boundaries
+      const PAGE_MARGIN_TB = 3;
       const opt = {
-        margin: 0,
+        margin: [PAGE_MARGIN_TB, 0, PAGE_MARGIN_TB, 0], // [top, left, bottom, right]
         filename: `${currentResumeData?.personalInfo?.fullName || 'Document'}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-          scale: 2, 
+        html2canvas: {
+          scale: 2,
           useCORS: true,
           backgroundColor: '#ffffff',
-          logging: false
+          logging: false,
+          width: clone.scrollWidth,
+          height: clone.scrollHeight,
         },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const },
         pagebreak: { mode: ['css', 'legacy'], avoid: ['.break-inside-avoid'] }
       };
-      await html2pdf().set(opt).from(element).save();
+
+      await html2pdf().set(opt).from(clone).save();
+
+      // Remove clone
+      document.body.removeChild(clone);
+    } catch (err) {
+      console.error('PDF export error:', err);
+      // Clean up clone if it exists
+      const leftoverClone = document.getElementById('resume-pdf-clone');
+      if (leftoverClone) leftoverClone.remove();
     } finally {
-      // Restore original styles
-      element.style.transform = originalTransform;
-      element.style.boxShadow = originalBoxShadow;
-      
-      // Remove the temporary PDF style override
-      const overrideStyle = document.getElementById('pdf-export-override');
-      if (overrideStyle) overrideStyle.remove();
-      
-      // Restore wrapper padding
-      if (wrapper) wrapper.style.paddingBottom = originalWrapperPb;
-      
-      // Restore visibility of no-print elements
-      noPrintElements.forEach((el, i) => {
-        (el as HTMLElement).style.display = originalDisplays[i];
-      });
-      
       setIsExportingPdf(false);
     }
   };
